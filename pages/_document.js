@@ -15,6 +15,9 @@ class MyDocument extends Document {
           {/* 预加载字体 */}
           {BLOG.FONT_AWESOME && (
             <>
+              <meta name="google-site-verification" content="iroN8lvkb1iv7I2jgreGPXL9UOmb0fsfvrdVetJMtyY" />
+              <meta name="msvalidate.01" content="4122C30EFE16C78A1996B1E5C19C91AF" />
+              <meta name="baidu-site-verification" content="codeva-fKsbp2N6tZ" />
               <link
                 rel='preload'
                 href={BLOG.FONT_AWESOME}
@@ -32,8 +35,8 @@ class MyDocument extends Document {
         </Head>
 
         <body>
-          <Main />
-          <NextScript />
+        <Main />
+        <NextScript />
         </body>
       </Html>
     )
