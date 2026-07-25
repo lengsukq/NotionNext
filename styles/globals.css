@@ -1,0 +1,523 @@
+@import 'tailwindcss';
+
+/* ============ 文艺风主题：宣纸 · 墨色 · 朱砂 ============ */
+@theme {
+  /* 宣纸色系 */
+  --color-paper: #f6f2e9; /* 页面底色 · 宣纸 */
+  --color-surface: #fcfaf4; /* 卡片纸面 */
+  --color-ink: #2e2b24; /* 正文墨色 */
+  --color-ink-soft: #6f6a5c; /* 次要文字 */
+  --color-ink-faint: #a9a290; /* 弱化文字 · 日期 */
+  --color-cinnabar: #a8442e; /* 朱砂红 · 点缀 */
+  --color-cinnabar-soft: #c26a52; /* 浅朱砂 */
+  --color-line: #e5ddcb; /* 分隔线 */
+
+  /* 衬线字体：西文 Cormorant Garamond，中文回退思源宋体 */
+  --font-serif: 'Cormorant Garamond', 'Noto Serif SC', 'Songti SC', 'STSong',
+    'SimSun', serif;
+
+  /* 动画 */
+  --animate-fade-up: fade-up 0.7s ease both;
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* 开屏：标题逐字晕染（墨迹效果） */
+  --animate-ink-char: ink-char 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  @keyframes ink-char {
+    from {
+      opacity: 0;
+      filter: blur(14px);
+      transform: translateY(22px) scale(1.18);
+    }
+    to {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  /* 开屏：装饰线延展 */
+  --animate-line-grow: line-grow 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  @keyframes line-grow {
+    from {
+      transform: scaleX(0);
+      opacity: 0;
+    }
+    to {
+      transform: scaleX(1);
+      opacity: 1;
+    }
+  }
+
+  /* 开屏：印章钤盖 */
+  --animate-seal: seal-stamp 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  @keyframes seal-stamp {
+    0% {
+      opacity: 0;
+      transform: scale(1.9) rotate(-14deg);
+    }
+    62% {
+      opacity: 1;
+      transform: scale(0.92) rotate(-4deg);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) rotate(-6deg);
+    }
+  }
+
+  /* 开屏：幕布上/下开启 */
+  --animate-curtain-up: curtain-up 1s cubic-bezier(0.76, 0, 0.24, 1) both;
+  @keyframes curtain-up {
+    to {
+      transform: translateY(-101%);
+    }
+  }
+  --animate-curtain-down: curtain-down 1s cubic-bezier(0.76, 0, 0.24, 1) both;
+  @keyframes curtain-down {
+    to {
+      transform: translateY(101%);
+    }
+  }
+
+  /* 淡出 */
+  --animate-fade-out: fade-out 0.45s ease both;
+  @keyframes fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+
+  /* Hero 背景 Ken Burns 缓慢推移 */
+  --animate-kenburns: kenburns 22s ease-in-out infinite alternate;
+  @keyframes kenburns {
+    from {
+      transform: scale(1.02) translateY(0);
+    }
+    to {
+      transform: scale(1.14) translateY(-2.5%);
+    }
+  }
+
+  /* 滚动指示器 */
+  --animate-scroll-dot: scroll-dot 1.8s ease-in-out infinite;
+  @keyframes scroll-dot {
+    0% {
+      opacity: 0;
+      transform: translateY(0);
+    }
+    35% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+}
+
+/* ============ 基础 ============ */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-serif);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* 选中文字染朱砂 */
+::selection {
+  background: rgba(168, 68, 46, 0.18);
+  color: var(--color-ink);
+}
+
+img {
+  display: unset;
+}
+
+/* 细 scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 4px;
+}
+
+/* ============ 文章正文（react-notion-x 覆盖） ============ */
+.notion {
+  font-family: var(--font-serif);
+  color: var(--color-ink);
+  font-size: 1.0625rem;
+  line-height: 2.05;
+  letter-spacing: 0.012em;
+}
+
+.notion-page {
+  padding: 0;
+  width: 100%;
+}
+
+/* 隐藏数据库页面属性表（type/status/slug 等原始字段） */
+.notion-collection-page-properties {
+  display: none;
+}
+
+/* ---- 标题 ---- */
+.notion-h {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  color: var(--color-ink);
+  letter-spacing: 0.02em;
+  margin-top: 2.8em;
+  margin-bottom: 1em;
+  line-height: 1.55;
+  scroll-margin-top: 2rem;
+}
+.notion-h1 {
+  font-size: 1.7rem;
+  padding-bottom: 0.45em;
+  border-bottom: 1px solid var(--color-line);
+}
+.notion-h2 {
+  font-size: 1.38rem;
+}
+.notion-h2::before {
+  content: '❧ ';
+  color: var(--color-cinnabar);
+}
+.notion-h3 {
+  font-size: 1.18rem;
+  padding-left: 0.85em;
+  border-left: 3px solid var(--color-cinnabar-soft);
+}
+
+/* ---- 段落 ---- */
+.notion-text {
+  margin: 1.05em 0;
+}
+
+/* ---- 引用块 · 朱砂竖线 ---- */
+.notion-quote {
+  border-left: 3px solid var(--color-cinnabar);
+  background: rgba(168, 68, 46, 0.045);
+  padding: 0.9em 1.5em;
+  margin: 1.8em 0;
+  border-radius: 0 8px 8px 0;
+  color: var(--color-ink-soft);
+  font-style: normal;
+}
+
+/* ---- 提示块 callout ---- */
+.notion-callout {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 12px;
+  padding: 1.05em 1.4em;
+  margin: 1.8em 0;
+  line-height: 1.95;
+  box-shadow: 0 4px 18px rgba(46, 43, 36, 0.05);
+}
+
+/* ---- 行内代码 · 柔和朱砂 ---- */
+.notion-inline-code {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+  font-size: 0.84em;
+  color: #9c3f2b;
+  background: rgba(168, 68, 46, 0.06);
+  border: 1px solid rgba(168, 68, 46, 0.12);
+  padding: 0.14em 0.5em;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+
+/* ---- 代码块 · 精致深色卡片 ---- */
+.notion-code {
+  border-radius: 14px;
+  margin: 2em 0;
+  padding: 1.5em 1.7em;
+  font-size: 0.86rem;
+  line-height: 1.8;
+  background: #2b2926;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow:
+    0 12px 40px rgba(46, 43, 36, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  tab-size: 2;
+}
+.notion-code::-webkit-scrollbar {
+  height: 7px;
+}
+.notion-code::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 4px;
+}
+
+/* ---- 折叠块 toggle · 纸面卡片 ---- */
+.notion-toggle {
+  width: 100%;
+  margin: 1.1em 0;
+  padding: 0.35em 1.1em;
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 12px;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+.notion-toggle[open] {
+  border-color: rgba(168, 68, 46, 0.28);
+  box-shadow: 0 6px 22px rgba(46, 43, 36, 0.06);
+}
+.notion-toggle > summary {
+  cursor: pointer;
+  outline: none;
+  list-style: none;
+  font-weight: 500;
+  padding: 0.55em 0;
+  transition: color 0.25s ease;
+}
+.notion-toggle > summary::-webkit-details-marker {
+  display: none;
+}
+.notion-toggle > summary::before {
+  content: '▸';
+  display: inline-block;
+  margin-right: 0.6em;
+  color: var(--color-cinnabar);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.notion-toggle[open] > summary::before {
+  transform: rotate(90deg);
+}
+.notion-toggle > summary:hover {
+  color: var(--color-cinnabar);
+}
+.notion-toggle > div {
+  margin: 0.2em 0 0.7em 1.15em;
+  padding-left: 1em;
+  border-left: 2px solid var(--color-line);
+}
+/* 折叠块内的标题不重复加装饰 */
+.notion-toggle .notion-h {
+  margin-top: 0.4em;
+  display: inline;
+}
+.notion-toggle .notion-h3 {
+  border-left: none;
+  padding-left: 0;
+}
+
+/* ---- 列表 · 朱砂序号 ---- */
+/* react-notion-x 会给连续编号块设置 start="N" 原生续号，
+   故采用原生编号 + ::marker 着色，既保证跨块续号正确（01 02 03…）又能朱砂美化 */
+.notion-list {
+  margin: 1.1em 0;
+}
+.notion-list li {
+  margin: 0.55em 0;
+}
+.notion-list-numbered {
+  list-style-type: decimal-leading-zero !important;
+  padding-inline-start: 2.4em;
+}
+.notion-list-numbered > li {
+  padding-left: 0.35em;
+}
+.notion-list-numbered > li::marker {
+  color: var(--color-cinnabar);
+  font-family: 'Cormorant Garamond', var(--font-serif);
+  font-weight: 600;
+  font-size: 1.08em;
+}
+.notion-list-disc {
+  padding-inline-start: 1.8em;
+}
+.notion-list-disc > li {
+  padding-left: 0.2em;
+}
+.notion-list-disc > li::marker {
+  color: var(--color-cinnabar-soft);
+}
+
+/* ---- 分割线 · 文艺花饰 ---- */
+.notion-hr {
+  border: none;
+  text-align: center;
+  margin: 2.8em 0;
+}
+.notion-hr::before {
+  content: '⁂';
+  color: var(--color-ink-faint);
+  font-size: 1.1rem;
+  letter-spacing: 0.5em;
+}
+
+/* ---- 链接 · 朱砂下划线 ---- */
+.notion-link {
+  color: var(--color-cinnabar);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(168, 68, 46, 0.35);
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+.notion-link:hover {
+  color: var(--color-cinnabar-soft);
+  border-bottom-color: var(--color-cinnabar-soft);
+}
+
+/* ---- 图片 · 纸面阴影 + 图注 ---- */
+.notion-asset-wrapper img {
+  border-radius: 10px;
+  box-shadow: 0 10px 36px rgba(46, 43, 36, 0.14);
+}
+.notion-asset-caption {
+  font-size: 0.82rem;
+  color: var(--color-ink-faint);
+  text-align: center;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  padding: 0.6em 0;
+}
+
+/* ---- 表格 ---- */
+.notion-table {
+  border: 1px solid var(--color-line);
+  border-radius: 10px;
+  margin: 1.8em 0;
+  overflow: hidden;
+}
+.notion-table th {
+  background: var(--color-surface);
+  font-weight: 600;
+}
+
+/* ---- 加粗 · 提亮 ---- */
+.notion b,
+.notion strong {
+  font-weight: 600;
+  color: var(--color-cinnabar);
+}
+
+/* Notion 代码块复制按钮 */
+.notion-code-copy-button {
+  opacity: 0.5;
+  transition: opacity 0.25s ease;
+}
+.notion-code:hover .notion-code-copy-button {
+  opacity: 0.9;
+}
+.notion-code-copy-button > svg {
+  pointer-events: none;
+}
+
+/* ============ 开屏动画 ============ */
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+}
+.splash-panel {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 50.5%;
+  background: linear-gradient(160deg, #1b1812 0%, #262117 55%, #1b1812 100%);
+}
+.splash-panel-top {
+  top: 0;
+}
+.splash-panel-bottom {
+  bottom: 0;
+}
+/* 幕布边缘的朱砂细线 */
+.splash-panel-top::after,
+.splash-panel-bottom::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(194, 106, 82, 0.55),
+    transparent
+  );
+}
+.splash-panel-top::after {
+  bottom: 0;
+}
+.splash-panel-bottom::before {
+  top: 0;
+}
+
+/* 开屏中心内容 */
+.splash-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-paper);
+}
+.splash-char {
+  display: inline-block;
+  animation: var(--animate-ink-char);
+}
+.splash-seal {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(194, 106, 82, 0.9);
+  border-radius: 6px;
+  color: #c26a52;
+  font-size: 1.35rem;
+  font-weight: 600;
+  animation: var(--animate-seal);
+  box-shadow: 0 0 24px rgba(194, 106, 82, 0.25);
+}
+
+/* ============ 滚动浮现（Reveal） ============ */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============ 首页 Hero ============ */
+.hero-title {
+  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.45);
+}
+
+/* 文章卡片封面 hover 缩放 */
+.cover-zoom img {
+  transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.cover-zoom:hover img {
+  transform: scale(1.06);
+}
