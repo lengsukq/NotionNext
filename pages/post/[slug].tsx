@@ -81,6 +81,14 @@ export default function PostPage({ post, prev, next }: Props) {
             className='ink-underline text-xs tracking-[0.25em] text-paper/75 transition-colors duration-300 hover:text-paper'>
             ⟵ 首页
           </Link>
+          {/* 品牌印章 logo · 悬停微放大 */}
+          <Link href='/' aria-label='返回首页' className='transition-transform duration-300 hover:scale-105'>
+            <img
+              src='/logo.png'
+              alt='冷苏手记'
+              className='h-9 w-9 rounded-lg object-cover shadow-[0_2px_14px_rgba(0,0,0,0.35)] ring-1 ring-paper/25'
+            />
+          </Link>
           <Link
             href='/posts'
             className='ink-underline text-xs tracking-[0.25em] text-paper/75 transition-colors duration-300 hover:text-paper'>

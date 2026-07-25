@@ -7,6 +7,9 @@ export default function Document() {
         {/* 首帧即为宣纸底色，避免加载瞬间滚动条/右缘透出黑边 */}
         <meta name='color-scheme' content='light only' />
         <meta name='theme-color' content='#f6f2e9' />
+        {/* 站点图标 · 水墨「苏」字印章（favicon.ico 由 Next.js 自动注入） */}
+        <link rel='icon' type='image/png' sizes='512x512' href='/logo.png' />
+        <link rel='apple-touch-icon' sizes='180x180' href='/apple-touch-icon.png' />
         {/* 文艺风衬线字体：思源宋体（中文）+ Cormorant Garamond（西文/数字） */}
         <link rel='preconnect' href='https://fonts.googleapis.com' />
         <link rel='preconnect' href='https://fonts.gstatic.com' crossOrigin='anonymous' />

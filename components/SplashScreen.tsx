@@ -212,6 +212,9 @@ export default function SplashScreen() {
         {/* 标题光晕 */}
         <div className='splash-halo' style={{ top: '50%', left: '50%', marginLeft: '-170px', marginTop: '-170px' }} />
 
+        {/* 站点印章 logo · 盖印入场（scale+blur+微旋转，如落印） */}
+        <img src='/logo.png' alt='' className='splash-logo mb-8' />
+
         {/* 顶部装饰线 */}
         <div
           className='animate-line-grow mb-10 h-px w-28 bg-gradient-to-r from-transparent via-cinnabar-soft/70 to-transparent'

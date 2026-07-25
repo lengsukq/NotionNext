@@ -124,7 +124,12 @@ export default function AllPosts({ posts }: Props) {
           className='ink-underline mb-10 inline-block text-xs tracking-[0.25em] text-ink-faint transition-colors duration-300 hover:text-cinnabar'>
           ⟵ 返回首页
         </Link>
-        <div className='text-xl text-cinnabar'>❧</div>
+        {/* 站点印章 logo · 墨迹晕染入场 */}
+        <img
+          src='/logo.png'
+          alt='冷苏手记印章'
+          className='mx-auto h-16 w-16 animate-ink-spread rounded-xl object-cover shadow-[0_6px_24px_rgba(168,68,46,0.16)]'
+        />
         <h1 className='mt-4 pl-[0.35em] text-4xl font-semibold tracking-[0.35em] text-ink'>
           全部文章
         </h1>

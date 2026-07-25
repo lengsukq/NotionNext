@@ -694,19 +694,30 @@ img {
   display: inline-block;
   animation: var(--animate-ink-char);
 }
-.splash-seal {
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid rgba(194, 106, 82, 0.9);
-  border-radius: 6px;
-  color: #c26a52;
-  font-size: 1.35rem;
-  font-weight: 600;
-  animation: var(--animate-seal);
-  box-shadow: 0 2px 12px rgba(168, 68, 46, 0.18);
+/* 站点印章 logo · 盖印入场（放大+模糊+微旋→落定，如印章盖下） */
+.splash-logo {
+  width: 76px;
+  height: 76px;
+  object-fit: cover;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(168, 68, 46, 0.22);
+  animation: seal-stamp 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
+}
+@keyframes seal-stamp {
+  0% {
+    opacity: 0;
+    transform: scale(1.8) rotate(-8deg);
+    filter: blur(8px);
+  }
+  60% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+    filter: blur(0);
+  }
 }
 
 /* ============ 开屏：古风文艺增强 ============ */
