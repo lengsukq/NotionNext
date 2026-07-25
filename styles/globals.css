@@ -137,6 +137,12 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* 移动端防水平溢出 */
+html,
+body {
+  overflow-x: hidden;
+}
+
 /* 选中文字染朱砂 */
 ::selection {
   background: rgba(168, 68, 46, 0.18);
@@ -163,6 +169,10 @@ img {
   font-size: 1.0625rem;
   line-height: 2.05;
   letter-spacing: 0.012em;
+  max-width: 100%;
+  overflow-x: hidden;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .notion-page {
@@ -240,7 +250,8 @@ img {
   border: 1px solid rgba(168, 68, 46, 0.12);
   padding: 0.14em 0.5em;
   border-radius: 5px;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-all;
 }
 
 /* ---- 代码块 · 精致深色卡片 ---- */
@@ -256,6 +267,8 @@ img {
     0 12px 40px rgba(46, 43, 36, 0.16),
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
   tab-size: 2;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .notion-code::-webkit-scrollbar {
   height: 7px;
@@ -380,7 +393,12 @@ img {
 }
 
 /* ---- 图片 · 纸面阴影 + 图注 ---- */
+.notion-asset-wrapper {
+  max-width: 100%;
+}
 .notion-asset-wrapper img {
+  max-width: 100%;
+  height: auto;
   border-radius: 10px;
   box-shadow: 0 10px 36px rgba(46, 43, 36, 0.14);
 }
@@ -394,6 +412,10 @@ img {
 }
 
 /* ---- 表格 ---- */
+.notion-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
 .notion-table {
   border: 1px solid var(--color-line);
   border-radius: 10px;
