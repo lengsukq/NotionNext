@@ -2,7 +2,7 @@ import BLOG from '@/blog.config'
 import { NotionAPI } from 'notion-client'
 import { getDateValue, getTextContent } from 'notion-utils'
 import { readCache, writeCache } from '@/lib/notion-cache'
-import { idToUuid, resolveCover, mapImageUrl, type Post } from '@/lib/notion'
+import { idToUuid, resolveCover, mapImageUrl, estimateReadMinutes, type Post } from '@/lib/notion'
 
 // ============ API 客户端 ============
 
@@ -108,6 +108,43 @@ function formatDate(timestamp?: number): string {
 }
 
 /**
+ * 从 schema 的 select/multi_select 字段中提取 值→颜色 映射
+ */
+function extractColorMap(schema: any, name: string): Record<string, string> {
+  const key = findSchemaKey(schema, name)
+  if (!key) return {}
+  const col = schema[key]
+  const map: Record<string, string> = {}
+  if (col?.options) {
+    for (const opt of col.options) {
+      if (opt.value) map[opt.value] = opt.color || 'default'
+    }
+  }
+  return map
+}
+
+/**
+ * 统计 blockMap 中所有文本内容的字数（用于文章详情）
+ */
+function countWords(recordMap: any): number {
+  const blocks = recordMap?.block || {}
+  let total = 0
+  for (const b of Object.values<any>(blocks)) {
+    const value = unwrap(b)
+    if (!value?.properties) continue
+    const type = value.type
+    // 只统计正文类 block
+    if (!['text', 'header', 'sub_header', 'sub_sub_header', 'bulleted_list', 'numbered_list', 'quote', 'callout', 'toggle', 'to_do'].includes(type)) continue
+    const title = value.properties.title
+    if (title) {
+      const text = getTextContent(title)
+      total += text.replace(/\s+/g, '').length
+    }
+  }
+  return total
+}
+
+/**
  * 获取所有文章列表
  * 从 Notion 数据库中解析出 type=Post & status=Published 的页面
  */
@@ -125,6 +162,10 @@ export async function getPosts(): Promise<Post[]> {
   const collectionRecord = Object.values(recordMap.collection || {})[0] as any
   const schema = unwrap(collectionRecord)?.schema || {}
 
+  // 提取标签/分类颜色映射
+  const tagColorMap = extractColorMap(schema, 'tags')
+  const categoryColorMap = extractColorMap(schema, 'category')
+
   const posts: Post[] = []
 
   for (const [id, b] of Object.entries<any>(block)) {
@@ -139,6 +180,14 @@ export async function getPosts(): Promise<Post[]> {
     if (type !== 'Post' || status !== 'Published') continue
 
     const dateVal = getDateValue(value.properties?.[findSchemaKey(schema, 'date')])
+    const tags = splitMulti(props[BLOG.NOTION_PROPERTY_NAME.tags])
+    const category = props[BLOG.NOTION_PROPERTY_NAME.category] || null
+
+    // 标签颜色映射
+    const tagColors: Record<string, string> = {}
+    for (const t of tags) {
+      if (tagColorMap[t]) tagColors[t] = tagColorMap[t]
+    }
 
     posts.push({
       id,
@@ -146,10 +195,14 @@ export async function getPosts(): Promise<Post[]> {
       slug: props[BLOG.NOTION_PROPERTY_NAME.slug] || id.replace(/-/g, ''),
       summary: props[BLOG.NOTION_PROPERTY_NAME.summary] || null,
       date: dateVal?.start_date || formatDate(value.created_time) || null,
-      tags: splitMulti(props[BLOG.NOTION_PROPERTY_NAME.tags]),
-      category: props[BLOG.NOTION_PROPERTY_NAME.category] || null,
+      tags,
+      category,
       icon: props[BLOG.NOTION_PROPERTY_NAME.icon] || null,
-      pageCover: resolveCover(mapImageUrl(value.format?.page_cover, value), props[BLOG.NOTION_PROPERTY_NAME.slug] || id)
+      pageCover: resolveCover(mapImageUrl(value.format?.page_cover, value), props[BLOG.NOTION_PROPERTY_NAME.slug] || id),
+      pageIcon: value.format?.page_icon || null,
+      lastEdited: formatDate(value.last_edited_time) || null,
+      tagColors: Object.keys(tagColors).length > 0 ? tagColors : null,
+      categoryColor: category ? (categoryColorMap[category] || null) : null
     })
   }
 
@@ -171,12 +224,18 @@ export async function getPostById(pageId: string): Promise<Post | null> {
   const value = unwrap(recordMap.block?.[uuid])
   if (!value) return null
 
+  const wordCount = countWords(recordMap)
+
   return {
     id: pageId,
     title: getTextContent(value.properties?.title) || '无标题',
     slug: pageId.replace(/-/g, ''),
     date: formatDate(value.last_edited_time || value.created_time) || null,
     pageCover: resolveCover(mapImageUrl(value.format?.page_cover, value), pageId),
+    pageIcon: value.format?.page_icon || null,
+    lastEdited: formatDate(value.last_edited_time) || null,
+    wordCount,
+    readMinutes: estimateReadMinutes(wordCount),
     blockMap: recordMap
   }
 }

@@ -13,6 +13,18 @@ export interface Post {
   icon?: string
   pageCover?: string
   blockMap?: any
+  /** Notion 页面 emoji 图标（format.page_icon） */
+  pageIcon?: string
+  /** 正文字数 */
+  wordCount?: number
+  /** 预估阅读分钟数 */
+  readMinutes?: number
+  /** 最后编辑日期 */
+  lastEdited?: string
+  /** 标签 → Notion 颜色名 */
+  tagColors?: Record<string, string>
+  /** 分类 Notion 颜色名 */
+  categoryColor?: string
 }
 
 // ============ 工具函数 ============
@@ -54,4 +66,41 @@ export function mapImageUrl(img?: string, block?: any): string | undefined {
   }
 
   return url
+}
+
+// ============ Notion 颜色映射 ============
+
+/**
+ * Notion 颜色名 → 文艺风低饱和色 Tailwind 类名
+ * 返回 [文字色, 背景色, 边框色]
+ */
+const NOTION_COLOR_MAP: Record<string, [string, string, string]> = {
+  red: ['text-[#a8442e]', 'bg-[#a8442e]/10', 'border-[#a8442e]/30'],
+  pink: ['text-[#a05268]', 'bg-[#a05268]/10', 'border-[#a05268]/30'],
+  purple: ['text-[#7b5ea7]', 'bg-[#7b5ea7]/10', 'border-[#7b5ea7]/30'],
+  blue: ['text-[#4a6fa5]', 'bg-[#4a6fa5]/10', 'border-[#4a6fa5]/30'],
+  green: ['text-[#4e7a5a]', 'bg-[#4e7a5a]/10', 'border-[#4e7a5a]/30'],
+  orange: ['text-[#b0713a]', 'bg-[#b0713a]/10', 'border-[#b0713a]/30'],
+  yellow: ['text-[#9a7b2e]', 'bg-[#9a7b2e]/10', 'border-[#9a7b2e]/30'],
+  brown: ['text-[#7a5c3e]', 'bg-[#7a5c3e]/10', 'border-[#7a5c3e]/30'],
+  gray: ['text-[#6f6a5c]', 'bg-[#6f6a5c]/10', 'border-[#6f6a5c]/30'],
+  default: ['text-[#6f6a5c]', 'bg-[#6f6a5c]/8', 'border-[#6f6a5c]/25']
+}
+
+/**
+ * 获取 Notion 颜色对应的 Tailwind 类名组
+ * @param color Notion 颜色名（red/purple/orange...）
+ * @param slot 0=文字色 1=背景色 2=边框色
+ */
+export function notionColorClass(color?: string, slot: 0 | 1 | 2 = 0): string {
+  const mapped = NOTION_COLOR_MAP[color || 'default'] || NOTION_COLOR_MAP.default
+  return mapped[slot]
+}
+
+/**
+ * 估算阅读时长（中文约 400 字/分钟）
+ */
+export function estimateReadMinutes(wordCount?: number): number {
+  if (!wordCount) return 1
+  return Math.max(1, Math.round(wordCount / 400))
 }

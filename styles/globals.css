@@ -122,6 +122,128 @@
       transform: translateY(14px);
     }
   }
+
+  /* 轻柔浮动（装饰元素） */
+  --animate-float: float 4.5s ease-in-out infinite;
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  /* 呼吸灯效果 */
+  --animate-breathe: breathe 3.2s ease-in-out infinite;
+  @keyframes breathe {
+    0%, 100% {
+      opacity: 0.5;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.25);
+    }
+  }
+
+  /* 笔触划过（装饰线） */
+  --animate-brush: brush-stroke 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+  @keyframes brush-stroke {
+    from {
+      transform: scaleX(0);
+      opacity: 0;
+    }
+    to {
+      transform: scaleX(1);
+      opacity: 1;
+    }
+  }
+
+  /* 文字微光流动 */
+  --animate-shimmer: text-shimmer 3.5s ease-in-out infinite;
+  @keyframes text-shimmer {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  /* 侧向滑入 */
+  --animate-slide-left: slide-in-left 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  @keyframes slide-in-left {
+    from {
+      opacity: 0;
+      transform: translateX(-24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  --animate-slide-right: slide-in-right 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  @keyframes slide-in-right {
+    from {
+      opacity: 0;
+      transform: translateX(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* 墨晕扩散（页面过渡） */
+  --animate-ink-spread: ink-spread 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  @keyframes ink-spread {
+    from {
+      opacity: 0;
+      transform: scale(0.92);
+      filter: blur(6px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+      filter: blur(0);
+    }
+  }
+
+  /* 风吹散效果 */
+  --animate-wind-away: wind-away 2.8s ease-in-out infinite;
+  @keyframes wind-away {
+    0%, 100% {
+      opacity: 0.85;
+      transform: translateX(0) skewX(0);
+      filter: blur(0);
+    }
+    50% {
+      opacity: 0.55;
+      transform: translateX(6px) skewX(-2deg);
+      filter: blur(0.8px);
+    }
+  }
+
+  /* 视差辅助：慢速/快速纵向漂移，用于装饰层营造景深 */
+  --animate-parallax-slow: parallax-slow 9s ease-in-out infinite;
+  @keyframes parallax-slow {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-12px);
+    }
+  }
+  --animate-parallax-fast: parallax-fast 5s ease-in-out infinite;
+  @keyframes parallax-fast {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
 }
 
 /* ============ 基础 ============ */
@@ -143,6 +265,15 @@ body {
   overflow-x: hidden;
 }
 
+/* 滚动条轨道与页面底色一致，避免加载时透出黑边 */
+html {
+  scrollbar-gutter: stable;
+  background-color: var(--color-paper);
+}
+::-webkit-scrollbar-track {
+  background: var(--color-paper);
+}
+
 /* 选中文字染朱砂 */
 ::selection {
   background: rgba(168, 68, 46, 0.18);
@@ -156,10 +287,14 @@ img {
 /* 细 scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 7px;
 }
 ::-webkit-scrollbar-thumb {
   background: var(--color-line);
   border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-ink-faint);
 }
 
 /* ============ 文章正文（react-notion-x 覆盖） ============ */
@@ -183,6 +318,13 @@ img {
 /* 隐藏数据库页面属性表（type/status/slug 等原始字段） */
 .notion-collection-page-properties {
   display: none;
+}
+
+/* 统一块级元素垂直节奏 */
+.notion > .notion-page-content > div,
+.notion-page-content > div {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 /* ---- 标题 ---- */
@@ -217,6 +359,7 @@ img {
 /* ---- 段落 ---- */
 .notion-text {
   margin: 1.05em 0;
+  padding: 0;
 }
 
 /* ---- 引用块 · 朱砂竖线 ---- */
@@ -236,7 +379,7 @@ img {
   border: 1px solid var(--color-line);
   border-radius: 12px;
   padding: 1.05em 1.4em;
-  margin: 1.8em 0;
+  margin: 1.4em 0;
   line-height: 1.95;
   box-shadow: 0 4px 18px rgba(46, 43, 36, 0.05);
 }
@@ -254,10 +397,10 @@ img {
   word-break: break-all;
 }
 
-/* ---- 代码块 · 精致深色卡片 ---- */
+/* ---- 代码块 · 精致深色卡片 · 左对齐 ---- */
 .notion-code {
   border-radius: 14px;
-  margin: 2em 0;
+  margin: 1.4em 0;
   padding: 1.5em 1.7em;
   font-size: 0.86rem;
   line-height: 1.8;
@@ -269,6 +412,7 @@ img {
   tab-size: 2;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  text-align: left;
 }
 .notion-code::-webkit-scrollbar {
   height: 7px;
@@ -333,18 +477,32 @@ img {
   padding-left: 0;
 }
 
-/* ---- 列表 · 朱砂序号 ---- */
+/* ---- 列布局对齐 ---- */
+.notion-column_list {
+  margin: 1.4em 0;
+}
+.notion-column {
+  padding: 0 0.6em;
+}
+.notion-column:first-child {
+  padding-left: 0;
+}
+.notion-column:last-child {
+  padding-right: 0;
+}
+
+/* ---- 列表 · 朱砂序号 · 统一缩进 ---- */
 /* react-notion-x 会给连续编号块设置 start="N" 原生续号，
    故采用原生编号 + ::marker 着色，既保证跨块续号正确（01 02 03…）又能朱砂美化 */
 .notion-list {
-  margin: 1.1em 0;
+  margin: 0.8em 0;
 }
 .notion-list li {
   margin: 0.55em 0;
 }
 .notion-list-numbered {
   list-style-type: decimal-leading-zero !important;
-  padding-inline-start: 2.4em;
+  padding-inline-start: 2em;
 }
 .notion-list-numbered > li {
   padding-left: 0.35em;
@@ -356,13 +514,47 @@ img {
   font-size: 1.08em;
 }
 .notion-list-disc {
-  padding-inline-start: 1.8em;
+  padding-inline-start: 1.6em;
 }
 .notion-list-disc > li {
   padding-left: 0.2em;
 }
 .notion-list-disc > li::marker {
   color: var(--color-cinnabar-soft);
+}
+/* 列表内嵌套块与列表文字左对齐 */
+.notion-list .notion-code,
+.notion-list .notion-callout,
+.notion-list .notion-quote {
+  margin-left: 0;
+  margin-right: 0;
+}
+/* 列表内嵌套块收紧间距 */
+.notion-list .notion-code {
+  margin-top: 0.7em;
+  margin-bottom: 0.7em;
+}
+.notion-list .notion-callout {
+  margin-top: 0.7em;
+  margin-bottom: 0.7em;
+}
+.notion-list .notion-text {
+  margin: 0.4em 0;
+}
+
+/* 强制代码块全宽左对齐（覆盖 react-notion-x 可能的居中行为） */
+.notion-code {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+/* react-notion-x 块容器统一左对齐 */
+.notion-frame {
+  width: 100%;
+}
+.notion-page-content {
+  width: 100%;
 }
 
 /* ---- 分割线 · 文艺花饰 ---- */
@@ -630,6 +822,162 @@ img {
   to   { opacity: 1; transform: scale(1); }
 }
 
+/* ---- 飞鸟 ---- */
+.splash-bird {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  animation: bird-fly var(--bird-duration) cubic-bezier(0.25, 0.46, 0.45, 0.94) var(--bird-delay) forwards;
+}
+.splash-bird::before,
+.splash-bird::after {
+  content: '';
+  position: absolute;
+  width: var(--bird-size);
+  height: calc(var(--bird-size) * 0.35);
+  border-top: 1.5px solid rgba(46, 43, 36, 0.4);
+  border-radius: 50% 50% 0 0;
+}
+.splash-bird::before {
+  left: 0;
+  transform-origin: right bottom;
+  animation: wing-left 0.5s ease-in-out infinite alternate;
+}
+.splash-bird::after {
+  left: calc(var(--bird-size) - 1px);
+  transform-origin: left bottom;
+  animation: wing-right 0.5s ease-in-out infinite alternate;
+}
+@keyframes wing-left {
+  from { transform: rotate(8deg); }
+  to   { transform: rotate(-14deg); }
+}
+@keyframes wing-right {
+  from { transform: rotate(-8deg); }
+  to   { transform: rotate(14deg); }
+}
+@keyframes bird-fly {
+  0%   { opacity: 0; transform: translate(0, 0) scale(0.7); }
+  10%  { opacity: 0.7; }
+  90%  { opacity: 0.5; }
+  100% { opacity: 0; transform: translate(var(--bird-dx), var(--bird-dy)) scale(1); }
+}
+
+/* ---- 流萤 ---- */
+.splash-firefly {
+  position: absolute;
+  width: var(--ff-size);
+  height: var(--ff-size);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232, 200, 130, 0.8) 0%, rgba(232, 200, 130, 0.15) 60%, transparent 75%);
+  box-shadow: 0 0 8px 2px rgba(232, 200, 130, 0.25);
+  opacity: 0;
+  pointer-events: none;
+  animation:
+    firefly-in 1.2s ease var(--ff-delay) forwards,
+    firefly-drift var(--ff-duration) ease-in-out var(--ff-delay) infinite alternate,
+    firefly-glow 2.2s ease-in-out var(--ff-delay) infinite;
+}
+@keyframes firefly-in {
+  from { opacity: 0; }
+  to   { opacity: 0.8; }
+}
+@keyframes firefly-drift {
+  from { transform: translate(0, 0); }
+  to   { transform: translate(var(--ff-dx), var(--ff-dy)); }
+}
+@keyframes firefly-glow {
+  0%, 100% { filter: brightness(0.6); }
+  50%      { filter: brightness(1.4); }
+}
+
+/* ---- 墨竹枝影 ---- */
+.splash-bamboo {
+  position: absolute;
+  bottom: 0;
+  opacity: 0;
+  pointer-events: none;
+  transform-origin: bottom center;
+  animation: bamboo-in 2s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
+}
+@keyframes bamboo-in {
+  from { opacity: 0; transform: translateY(20px) rotate(2deg); }
+  to   { opacity: 1; transform: translateY(0) rotate(0); }
+}
+.splash-bamboo svg {
+  animation: bamboo-sway 5s ease-in-out 1.5s infinite alternate;
+  transform-origin: bottom center;
+}
+@keyframes bamboo-sway {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(1.5deg); }
+}
+
+/* ---- 标题光晕 ---- */
+.splash-halo {
+  position: absolute;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(194, 106, 82, 0.06) 0%, rgba(246, 242, 233, 0.04) 45%, transparent 70%);
+  filter: blur(20px);
+  opacity: 0;
+  pointer-events: none;
+  animation: halo-in 2.5s ease 0.5s forwards, halo-breathe 4s ease-in-out 2s infinite;
+}
+@keyframes halo-in {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes halo-breathe {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50%      { transform: scale(1.12); opacity: 1; }
+}
+
+/* ---- 加载圆环 ---- */
+.splash-loader {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: loader-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) 1.6s both;
+}
+@keyframes loader-in {
+  from { opacity: 0; transform: scale(0.7); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.splash-loader-arc {
+  transform-origin: center;
+  animation: loader-spin 1.3s linear infinite;
+}
+@keyframes loader-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.splash-loader-char {
+  position: absolute;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(194, 106, 82, 0.85);
+  animation: loader-char-pulse 2s ease-in-out infinite;
+}
+@keyframes loader-char-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50%      { opacity: 1; transform: scale(1.08); }
+}
+/* 页面就绪后圆环停转淡出 */
+.splash-loader-done .splash-loader-arc {
+  animation-play-state: paused;
+  opacity: 0.3;
+  transition: opacity 0.4s ease;
+}
+.splash-loader-done .splash-loader-char {
+  animation: none;
+  opacity: 1;
+}
+
 /* ---- 书法下划线 ---- */
 .splash-underline {
   width: 0;
@@ -676,4 +1024,201 @@ img {
 }
 .cover-zoom:hover img {
   transform: scale(1.06);
+}
+
+/* ============ 竖排文字（文艺装饰） ============ */
+.writing-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+}
+
+/* ============ 墨迹下划线（链接 hover） ============ */
+.ink-underline {
+  position: relative;
+}
+.ink-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(168, 68, 46, 0.6) 15%,
+    rgba(168, 68, 46, 0.7) 50%,
+    rgba(168, 68, 46, 0.6) 85%,
+    transparent
+  );
+  border-radius: 2px;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ink-underline:hover::after {
+  transform: scaleX(1);
+}
+
+/* ============ 朱砂填充按钮 ============ */
+.btn-cinnabar {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.btn-cinnabar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--color-cinnabar);
+  border-radius: 50%;
+  transform: scale(0);
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn-cinnabar:hover::before {
+  transform: scale(2.5);
+  border-radius: 0;
+}
+
+/* ============ 图片 shimmer 骨架屏 ============ */
+.img-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(110deg, #efe9dc 8%, #f8f4ea 18%, #efe9dc 33%);
+  background-size: 200% 100%;
+  animation: skeleton-wave 1.6s linear infinite;
+}
+@keyframes skeleton-wave {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ============ 页面过渡幕布 ============ */
+.page-transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #fcfaf4 0%, #f6f2e9 55%, #f0ebe0 100%);
+}
+.page-transition-overlay .transition-ink {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(168, 68, 46, 0.35) 0%, rgba(168, 68, 46, 0.08) 60%, transparent 75%);
+  animation: transition-ink-dot 0.7s ease-in-out infinite alternate;
+}
+@keyframes transition-ink-dot {
+  from {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  to {
+    transform: scale(2.2);
+    opacity: 1;
+  }
+}
+
+/* ============ 滚动进度条 ============ */
+.scroll-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  z-index: 80;
+  background: linear-gradient(
+    90deg,
+    rgba(168, 68, 46, 0.45),
+    var(--color-cinnabar) 40%,
+    var(--color-cinnabar-soft) 75%,
+    rgba(194, 106, 82, 0.7)
+  );
+  border-radius: 0 2px 2px 0;
+  transform-origin: left center;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 8px rgba(168, 68, 46, 0.3);
+}
+
+/* ============ 时间线 ============ */
+.timeline-line {
+  position: absolute;
+  left: 7px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--color-line) 8%, var(--color-line) 92%, transparent);
+}
+.timeline-dot {
+  position: absolute;
+  left: 3px;
+  top: 1.6rem;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 2px solid var(--color-cinnabar-soft);
+  background: var(--color-paper);
+  transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.group:hover .timeline-dot {
+  background: var(--color-cinnabar);
+  border-color: var(--color-cinnabar);
+  box-shadow: 0 0 0 4px rgba(168, 68, 46, 0.12);
+  transform: scale(1.2);
+}
+
+/* ============ TOC 目录 ============ */
+.toc-indicator {
+  position: absolute;
+  left: 0;
+  width: 2px;
+  height: 1.4em;
+  border-radius: 2px;
+  background: var(--color-cinnabar);
+  transition: top 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ============ 数字滚动 ============ */
+.stat-number {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============ 回到顶部 ============ */
+.back-to-top {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 2rem;
+  z-index: 70;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(252, 250, 244, 0.9);
+  border: 1px solid var(--color-line);
+  color: var(--color-ink-soft);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(46, 43, 36, 0.1);
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  opacity: 0;
+  transform: translateY(16px);
+  pointer-events: none;
+}
+.back-to-top.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.back-to-top:hover {
+  color: var(--color-cinnabar);
+  border-color: rgba(168, 68, 46, 0.35);
+  box-shadow: 0 6px 24px rgba(168, 68, 46, 0.15);
+  transform: translateY(-3px);
 }

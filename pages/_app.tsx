@@ -8,6 +8,9 @@ import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import BLOG from '@/blog.config'
 import SplashScreen from '@/components/SplashScreen'
+import ScrollProgress from '@/components/ScrollProgress'
+import PageTransition from '@/components/PageTransition'
+import BackToTop from '@/components/BackToTop'
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -20,6 +23,10 @@ export default function App({ Component, pageProps }: AppProps) {
       </Head>
       {/* 开屏动画（每会话一次） */}
       <SplashScreen />
+      {/* 全局动效组件 */}
+      <ScrollProgress />
+      <PageTransition />
+      <BackToTop />
       <Component {...pageProps} />
     </>
   )
