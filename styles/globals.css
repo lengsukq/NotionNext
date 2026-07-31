@@ -74,17 +74,46 @@
     }
   }
 
-  /* 开屏：幕布上/下开启 */
-  --animate-curtain-up: curtain-up 1s cubic-bezier(0.76, 0, 0.24, 1) both;
-  @keyframes curtain-up {
+  /* 开屏：标题淡入 + 字距展开 */
+  --animate-tracking-expand: tracking-expand 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  @keyframes tracking-expand {
+    from {
+      letter-spacing: 0.5em;
+      opacity: 0;
+      filter: blur(6px);
+    }
     to {
-      transform: translateY(-101%);
+      letter-spacing: 0.16em;
+      opacity: 1;
+      filter: blur(0);
     }
   }
-  --animate-curtain-down: curtain-down 1s cubic-bezier(0.76, 0, 0.24, 1) both;
-  @keyframes curtain-down {
+
+  /* 开屏：整体优雅淡出 */
+  --animate-splash-exit: splash-exit 0.6s ease both;
+  @keyframes splash-exit {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
     to {
-      transform: translateY(101%);
+      opacity: 0;
+      transform: scale(0.98);
+    }
+  }
+
+  /* 新页面内容入场 */
+  --animate-page-enter: page-enter 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  @keyframes page-enter {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+      filter: blur(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
     }
   }
 
@@ -280,6 +309,13 @@ html {
   color: var(--color-ink);
 }
 
+/* 键盘焦点可见性 · 朱砂描边 */
+:focus-visible {
+  outline: 2px solid rgba(168, 68, 46, 0.55);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 img {
   display: unset;
 }
@@ -295,6 +331,25 @@ img {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-ink-faint);
+}
+
+/* 横向滚动区域（如横向时间线）细滚动条 */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
+}
+.scrollbar-thin::-webkit-scrollbar {
+  height: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 3px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: var(--color-cinnabar-soft);
 }
 
 /* ============ 文章正文（react-notion-x 覆盖） ============ */
@@ -638,63 +693,55 @@ img {
   pointer-events: none;
 }
 
-/* ============ 开屏动画 ============ */
+/* ============ 开屏动画（极简留白） ============ */
 .splash {
   position: fixed;
   inset: 0;
   z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #fcfaf4 0%, #f6f2e9 60%, #f0ebe0 100%);
+  color: var(--color-ink);
   pointer-events: none;
 }
-.splash-panel {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  height: 50.5%;
-  background: linear-gradient(160deg, #fcfaf4 0%, #f6f2e9 55%, #f0ebe0 100%);
-}
-.splash-panel-top {
-  top: 0;
-}
-.splash-panel-bottom {
-  bottom: 0;
-}
-/* 幕布边缘的朱砂细线 */
-.splash-panel-top::after,
-.splash-panel-bottom::before {
+/* 顶部与底部的极细朱砂描边点缀 */
+.splash::before,
+.splash::after {
   content: '';
   position: absolute;
-  left: 0;
-  width: 100%;
+  left: 50%;
+  width: 38%;
   height: 1px;
+  transform: translateX(-50%);
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(194, 106, 82, 0.55),
+    rgba(194, 106, 82, 0.4),
     transparent
   );
 }
-.splash-panel-top::after {
-  bottom: 0;
-}
-.splash-panel-bottom::before {
+.splash::before {
   top: 0;
 }
+.splash::after {
+  bottom: 0;
+}
 
-/* 开屏中心内容 */
+/* 离场：整体优雅淡出 */
+.splash.leaving {
+  animation: var(--animate-splash-exit);
+}
+
+/* 中心内容：纵向堆叠，以留白自然过渡 */
 .splash-content {
-  position: absolute;
-  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: var(--color-ink);
 }
-.splash-char {
-  display: inline-block;
-  animation: var(--animate-ink-char);
-}
-/* 站点印章 logo · 盖印入场（放大+模糊+微旋→落定，如印章盖下） */
+
+/* 印章落印 */
 .splash-logo {
   width: 76px;
   height: 76px;
@@ -720,308 +767,95 @@ img {
   }
 }
 
-/* ============ 开屏：古风文艺增强 ============ */
-
-/* ---- 淡墨远山 ---- */
-.splash-landscape {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 42%;
-  opacity: 0;
-  animation: landscape-in 2.5s ease 0.2s forwards;
-  pointer-events: none;
-  overflow: hidden;
-}
-@keyframes landscape-in {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.splash-landscape::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: -8%;
-  width: 116%;
-  height: 100%;
-  background:
-    /* 远山 — 最淡、最高 */
-    radial-gradient(ellipse 50% 50% at 18% 100%, rgba(46,43,36,0.055) 0%, transparent 70%),
-    /* 中山 */
-    radial-gradient(ellipse 35% 60% at 55% 100%, rgba(46,43,36,0.04) 0%, transparent 65%),
-    /* 近山 — 略实 */
-    radial-gradient(ellipse 55% 40% at 78% 100%, rgba(46,43,36,0.06) 0%, transparent 72%),
-    /* 山间雾霭 */
-    radial-gradient(ellipse 120% 18% at 40% 65%, rgba(246,242,233,0.12) 0%, transparent 70%);
-  animation: mountain-float 7s ease-in-out 1s infinite alternate;
-}
-@keyframes mountain-float {
-  from { transform: translateY(0); }
-  to   { transform: translateY(-5px); }
-}
-
-/* ---- 孤月 ---- */
-.splash-moon {
-  position: absolute;
-  top: 10%;
-  right: 18%;
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 38% 38%, rgba(246,242,233,0.65) 0%, rgba(246,242,233,0.08) 55%, transparent 75%);
-  opacity: 0;
-  filter: blur(3px);
-  pointer-events: none;
+/* 标题：淡入 + 字距展开 + 轻柔光晕 */
+.splash-title {
+  margin-top: 2.5rem;
+  font-size: 2.75rem;
+  font-weight: 500;
   animation:
-    moon-in 2s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards,
-    moon-breathe 5s ease-in-out 1.5s infinite;
+    var(--animate-tracking-expand),
+    title-glow 3.5s ease-in-out 1.2s infinite;
 }
-@keyframes moon-in {
-  from { opacity: 0; transform: translateX(30px) scale(0.85); }
-  to   { opacity: 1; transform: translateX(0) scale(1); }
-}
-@keyframes moon-breathe {
-  0%, 100% { opacity: 0.7; transform: scale(1); }
-  50%      { opacity: 0.9; transform: scale(1.04); }
-}
-
-/* ---- 飘落花瓣 ---- */
-.splash-petal {
-  position: absolute;
-  top: -12px;
-  width: var(--size);
-  height: var(--size);
-  background: linear-gradient(135deg, rgba(194,106,82,0.22) 0%, rgba(194,106,82,0.08) 100%);
-  border-radius: 50% 0 50% 0;
-  opacity: 0;
-  pointer-events: none;
-  animation: petal-fall var(--duration) ease-in var(--delay) infinite;
-}
-@keyframes petal-fall {
-  0% {
-    opacity: 0;
-    transform: translateY(0) rotate(0deg) scale(0.6);
+@keyframes title-glow {
+  0%, 100% {
+    text-shadow: 0 0 24px rgba(168, 68, 46, 0.08);
   }
-  8% {
-    opacity: 0.7;
-    transform: translateY(2vh) rotate(15deg) scale(1);
+  50% {
+    text-shadow: 0 0 36px rgba(168, 68, 46, 0.18);
   }
-  85% {
-    opacity: 0.35;
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(105vh) rotate(calc(var(--rotation, 180deg))) scale(0.3);
+}
+@media (min-width: 768px) {
+  .splash-title {
+    font-size: 3.75rem;
   }
 }
 
-/* ---- 墨点晕染 ---- */
-.splash-inkdot {
-  position: absolute;
-  width: var(--dot-size);
-  height: var(--dot-size);
+/* 副标题：与标题以留白分隔 */
+.splash-subtitle {
+  margin-top: 2.25rem;
+  font-size: 0.875rem;
+  letter-spacing: 0.32em;
+  color: rgba(46, 43, 36, 0.55);
+  animation: var(--animate-fade-up);
+}
+
+/* 加载指示：圆形朱砂墨点呼吸（不使用线性元素） */
+.splash-ink-dot {
+  margin-top: 3rem;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background: radial-gradient(circle at 40% 40%, rgba(46,43,36,0.045) 0%, transparent 70%);
-  filter: blur(4px);
-  opacity: 0;
-  pointer-events: none;
-  animation: inkdot-appear 2.5s ease var(--dot-delay) forwards;
-}
-@keyframes inkdot-appear {
-  from { opacity: 0; transform: scale(0.3); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-/* ---- 飞鸟 ---- */
-.splash-bird {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-  animation: bird-fly var(--bird-duration) cubic-bezier(0.25, 0.46, 0.45, 0.94) var(--bird-delay) forwards;
-}
-.splash-bird::before,
-.splash-bird::after {
-  content: '';
-  position: absolute;
-  width: var(--bird-size);
-  height: calc(var(--bird-size) * 0.35);
-  border-top: 1.5px solid rgba(46, 43, 36, 0.4);
-  border-radius: 50% 50% 0 0;
-}
-.splash-bird::before {
-  left: 0;
-  transform-origin: right bottom;
-  animation: wing-left 0.5s ease-in-out infinite alternate;
-}
-.splash-bird::after {
-  left: calc(var(--bird-size) - 1px);
-  transform-origin: left bottom;
-  animation: wing-right 0.5s ease-in-out infinite alternate;
-}
-@keyframes wing-left {
-  from { transform: rotate(8deg); }
-  to   { transform: rotate(-14deg); }
-}
-@keyframes wing-right {
-  from { transform: rotate(-8deg); }
-  to   { transform: rotate(14deg); }
-}
-@keyframes bird-fly {
-  0%   { opacity: 0; transform: translate(0, 0) scale(0.7); }
-  10%  { opacity: 0.7; }
-  90%  { opacity: 0.5; }
-  100% { opacity: 0; transform: translate(var(--bird-dx), var(--bird-dy)) scale(1); }
-}
-
-/* ---- 流萤 ---- */
-.splash-firefly {
-  position: absolute;
-  width: var(--ff-size);
-  height: var(--ff-size);
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(232, 200, 130, 0.8) 0%, rgba(232, 200, 130, 0.15) 60%, transparent 75%);
-  box-shadow: 0 0 8px 2px rgba(232, 200, 130, 0.25);
-  opacity: 0;
-  pointer-events: none;
-  animation:
-    firefly-in 1.2s ease var(--ff-delay) forwards,
-    firefly-drift var(--ff-duration) ease-in-out var(--ff-delay) infinite alternate,
-    firefly-glow 2.2s ease-in-out var(--ff-delay) infinite;
-}
-@keyframes firefly-in {
-  from { opacity: 0; }
-  to   { opacity: 0.8; }
-}
-@keyframes firefly-drift {
-  from { transform: translate(0, 0); }
-  to   { transform: translate(var(--ff-dx), var(--ff-dy)); }
-}
-@keyframes firefly-glow {
-  0%, 100% { filter: brightness(0.6); }
-  50%      { filter: brightness(1.4); }
-}
-
-/* ---- 墨竹枝影 ---- */
-.splash-bamboo {
-  position: absolute;
-  bottom: 0;
-  opacity: 0;
-  pointer-events: none;
-  transform-origin: bottom center;
-  animation: bamboo-in 2s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
-}
-@keyframes bamboo-in {
-  from { opacity: 0; transform: translateY(20px) rotate(2deg); }
-  to   { opacity: 1; transform: translateY(0) rotate(0); }
-}
-.splash-bamboo svg {
-  animation: bamboo-sway 5s ease-in-out 1.5s infinite alternate;
-  transform-origin: bottom center;
-}
-@keyframes bamboo-sway {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(1.5deg); }
-}
-
-/* ---- 标题光晕 ---- */
-.splash-halo {
-  position: absolute;
-  width: 340px;
-  height: 340px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(194, 106, 82, 0.06) 0%, rgba(246, 242, 233, 0.04) 45%, transparent 70%);
-  filter: blur(20px);
-  opacity: 0;
-  pointer-events: none;
-  animation: halo-in 2.5s ease 0.5s forwards, halo-breathe 4s ease-in-out 2s infinite;
-}
-@keyframes halo-in {
-  from { opacity: 0; transform: scale(0.6); }
-  to   { opacity: 1; transform: scale(1); }
-}
-@keyframes halo-breathe {
-  0%, 100% { transform: scale(1); opacity: 0.8; }
-  50%      { transform: scale(1.12); opacity: 1; }
-}
-
-/* ---- 加载圆环 ---- */
-.splash-loader {
-  position: relative;
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: loader-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) 1.6s both;
-}
-@keyframes loader-in {
-  from { opacity: 0; transform: scale(0.7); }
-  to   { opacity: 1; transform: scale(1); }
-}
-.splash-loader-arc {
-  transform-origin: center;
-  animation: loader-spin 1.3s linear infinite;
-}
-@keyframes loader-spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-.splash-loader-char {
-  position: absolute;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: rgba(194, 106, 82, 0.85);
-  animation: loader-char-pulse 2s ease-in-out infinite;
-}
-@keyframes loader-char-pulse {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50%      { opacity: 1; transform: scale(1.08); }
-}
-/* 页面就绪后圆环停转淡出 */
-.splash-loader-done .splash-loader-arc {
-  animation-play-state: paused;
-  opacity: 0.3;
-  transition: opacity 0.4s ease;
-}
-.splash-loader-done .splash-loader-char {
-  animation: none;
-  opacity: 1;
-}
-
-/* ---- 书法下划线 ---- */
-.splash-underline {
-  width: 0;
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(194,106,82,0.45) 10%,
-    rgba(194,106,82,0.55) 50%,
-    rgba(194,106,82,0.45) 90%,
-    transparent 100%
+  background: radial-gradient(
+    circle,
+    rgba(168, 68, 46, 0.85) 0%,
+    rgba(168, 68, 46, 0.25) 60%,
+    transparent 75%
   );
-  border-radius: 2px;
-  margin-top: 6px;
-  animation: underline-draw 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  box-shadow: 0 0 10px 2px rgba(168, 68, 46, 0.18);
+  animation: ink-dot-breathe 1.6s ease-in-out infinite;
 }
-@keyframes underline-draw {
-  from { width: 0; opacity: 0; }
-  to   { width: 100%; opacity: 1; }
+@keyframes ink-dot-breathe {
+  0%, 100% {
+    opacity: 0.45;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.25);
+  }
 }
 
 /* ============ 滚动浮现（Reveal） ============ */
 .reveal {
   opacity: 0;
-  transform: translateY(26px);
   transition:
     opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: opacity, transform;
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform, filter;
+}
+.reveal-up {
+  transform: translateY(26px);
+}
+.reveal-down {
+  transform: translateY(-26px);
+}
+.reveal-left {
+  transform: translateX(-26px);
+}
+.reveal-right {
+  transform: translateX(26px);
+}
+.reveal-zoom {
+  transform: scale(0.94);
+}
+.reveal-blur {
+  filter: blur(6px);
 }
 .reveal.reveal-visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) translateX(0) scale(1);
+  filter: blur(0);
 }
 
 /* ============ 首页 Hero ============ */
@@ -1029,12 +863,18 @@ img {
   text-shadow: 0 2px 30px rgba(0, 0, 0, 0.45);
 }
 
-/* 文章卡片封面 hover 缩放 */
+/* 文章卡片封面 hover 缩放 + 色彩增强 */
 .cover-zoom img {
-  transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  filter: saturate(0.96);
+  transition:
+    transform 1.2s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.6s ease;
 }
-.cover-zoom:hover img {
-  transform: scale(1.06);
+@media (hover: hover) {
+  .cover-zoom:hover img {
+    transform: scale(1.06);
+    filter: saturate(1.12) brightness(1.03);
+  }
 }
 
 /* ============ 竖排文字（文艺装饰） ============ */
@@ -1087,9 +927,49 @@ img {
   transform: scale(0);
   transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.btn-cinnabar:hover::before {
-  transform: scale(2.5);
-  border-radius: 0;
+@media (hover: hover) {
+  .btn-cinnabar:hover::before {
+    transform: scale(2.5);
+    border-radius: 0;
+  }
+}
+.btn-cinnabar:active {
+  transform: scale(0.97);
+}
+
+/* ============ 通用微交互 ============ */
+/* 卡片悬浮：上浮 + 阴影加深 */
+.card-lift {
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s ease;
+  will-change: transform;
+}
+@media (hover: hover) {
+  .card-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 40px rgba(46, 43, 36, 0.1);
+    border-color: rgba(168, 68, 46, 0.2);
+  }
+}
+.card-lift:active {
+  transform: translateY(-1px) scale(0.99);
+}
+
+/* 按钮悬浮：轻微上浮 */
+.btn-lift {
+  transition:
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (hover: hover) {
+  .btn-lift:hover {
+    transform: translateY(-2px);
+  }
+}
+.btn-lift:active {
+  transform: translateY(0) scale(0.98);
 }
 
 /* ============ 图片 shimmer 骨架屏 ============ */
@@ -1116,22 +996,44 @@ img {
   align-items: center;
   justify-content: center;
   background: linear-gradient(160deg, #fcfaf4 0%, #f6f2e9 55%, #f0ebe0 100%);
+  opacity: 0;
+  transform: translateY(-101%);
+  transition:
+    opacity 0.25s ease,
+    transform 0.55s cubic-bezier(0.76, 0, 0.24, 1);
 }
+/* 覆盖：面板自上方落下并淡入 */
+.page-transition-overlay.covering {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* 揭开：面板向上收起滑出 */
+.page-transition-overlay.revealing {
+  opacity: 1;
+  transform: translateY(-101%);
+}
+/* 中央墨点扩散 */
 .page-transition-overlay .transition-ink {
-  width: 12px;
-  height: 12px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(168, 68, 46, 0.35) 0%, rgba(168, 68, 46, 0.08) 60%, transparent 75%);
-  animation: transition-ink-dot 0.7s ease-in-out infinite alternate;
+  background: radial-gradient(circle, rgba(168, 68, 46, 0.3) 0%, rgba(168, 68, 46, 0.06) 55%, transparent 75%);
+  opacity: 0;
 }
-@keyframes transition-ink-dot {
-  from {
-    transform: scale(1);
-    opacity: 0.6;
+.page-transition-overlay.covering .transition-ink {
+  animation: transition-ink-burst 0.55s ease-out 0.12s both;
+}
+@keyframes transition-ink-burst {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
   }
-  to {
-    transform: scale(2.2);
+  30% {
     opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.8);
   }
 }
 
@@ -1227,9 +1129,61 @@ img {
   transform: translateY(0);
   pointer-events: auto;
 }
-.back-to-top:hover {
-  color: var(--color-cinnabar);
-  border-color: rgba(168, 68, 46, 0.35);
-  box-shadow: 0 6px 24px rgba(168, 68, 46, 0.15);
-  transform: translateY(-3px);
+@media (hover: hover) {
+  .back-to-top:hover {
+    color: var(--color-cinnabar);
+    border-color: rgba(168, 68, 46, 0.35);
+    box-shadow: 0 6px 24px rgba(168, 68, 46, 0.15);
+    transform: translateY(-3px) scale(1.05);
+  }
+}
+.back-to-top:active {
+  transform: scale(0.92);
+}
+
+/* ============ 文章正文块滚动浮现 ============ */
+.block-reveal {
+  opacity: 0;
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform, filter;
+}
+.block-reveal.block-reveal-title {
+  transform: translateY(18px);
+}
+.block-reveal.block-reveal-code {
+  transform: scale(0.96);
+}
+.block-reveal.block-reveal-image {
+  filter: blur(4px);
+  transform: scale(0.98);
+}
+.block-reveal.block-reveal-quote {
+  transform: translateX(-16px);
+}
+.block-reveal.block-reveal-visible {
+  opacity: 1;
+  transform: translateY(0) translateX(0) scale(1);
+  filter: blur(0);
+}
+
+/* ============ 尊重系统减少动态效果 ============ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal,
+  .block-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition-delay: 0ms !important;
+  }
 }

@@ -56,3 +56,6 @@ verification-*.png
 
 # notion api cache
 .cache/
+
+# typescript build info
+*.tsbuildinfo

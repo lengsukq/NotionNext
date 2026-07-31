@@ -207,7 +207,7 @@ export default function Home({ posts }: Props) {
 
       {/* ============ 精选文章 ============ */}
       <section className='mx-auto max-w-5xl px-6 py-24'>
-        <Reveal>
+        <Reveal variant='blur'>
           <div className='mb-14 flex items-center justify-center gap-5'>
             <span className='h-px w-14 bg-line' />
             <h2 className='pl-[0.3em] text-2xl font-semibold tracking-[0.3em] text-ink'>
@@ -221,6 +221,7 @@ export default function Home({ posts }: Props) {
           {featured.map((post, i) => (
             <Reveal
               key={post.id}
+              variant='zoom'
               delay={i * 120}
               className={i === 0 ? 'md:col-span-2' : ''}>
               <PostCard post={post} large={i === 0} />
@@ -229,7 +230,7 @@ export default function Home({ posts }: Props) {
         </div>
 
         {/* 诗意装饰分隔 */}
-        <Reveal delay={100}>
+        <Reveal variant='fade' delay={100}>
           <div className='relative mt-24 flex items-center justify-center py-10'>
             {/* 飘落花瓣微动效（视差辅助动画营造景深） */}
             <span className='absolute left-[18%] top-2 h-2 w-2 animate-parallax-slow rounded-full bg-cinnabar-soft/20' style={{ animationDelay: '0.5s' }} />
@@ -257,7 +258,7 @@ export default function Home({ posts }: Props) {
           <div className='text-center'>
             <Link
               href='/posts'
-              className='btn-cinnabar group inline-flex items-center gap-3 border border-ink/25 px-10 py-3.5 text-sm tracking-[0.25em] text-ink transition-all duration-500 hover:border-cinnabar hover:text-paper'>
+              className='btn-cinnabar btn-lift group inline-flex items-center gap-3 border border-ink/25 px-10 py-3.5 text-sm tracking-[0.25em] text-ink hover:border-cinnabar hover:text-paper'>
               阅读全部文章
               <span className='transition-transform duration-500 group-hover:translate-x-1.5'>
                 ⟶
@@ -319,7 +320,7 @@ function StatNumber({ value, label }: { value: number; label: string }) {
  */
 function PostCard({ post, large }: { post: Post; large?: boolean }) {
   return (
-    <Link href={`/post/${post.slug}`} className='group block'>
+    <Link href={`/post/${post.slug}`} className='group card-lift block rounded-sm'>
       {/* 封面 */}
       <div
         className={`cover-zoom img-skeleton relative overflow-hidden rounded-sm transition-shadow duration-700 group-hover:shadow-[0_16px_48px_rgba(46,43,36,0.15)] ${
@@ -356,7 +357,7 @@ function PostCard({ post, large }: { post: Post; large?: boolean }) {
       </div>
 
       {/* 信息 */}
-      <div className='pt-6'>
+      <div className='px-4 pb-1 pt-6 sm:px-5'>
         <div className='flex items-center gap-3 text-xs tracking-[0.18em] text-ink-faint tabular-nums'>
           {post.date && <span>{post.date}</span>}
           {post.readMinutes && (

@@ -121,14 +121,14 @@ export default function AllPosts({ posts }: Props) {
       <header className='animate-fade-up pt-24 pb-10 text-center'>
         <Link
           href='/'
-          className='ink-underline mb-10 inline-block text-xs tracking-[0.25em] text-ink-faint transition-colors duration-300 hover:text-cinnabar'>
+          className='ink-underline mb-10 block text-xs tracking-[0.25em] text-ink-faint transition-colors duration-300 hover:text-cinnabar'>
           ⟵ 返回首页
         </Link>
         {/* 站点印章 logo · 墨迹晕染入场 */}
         <img
           src='/logo.png'
           alt='冷苏手记印章'
-          className='mx-auto h-16 w-16 animate-ink-spread rounded-xl object-cover shadow-[0_6px_24px_rgba(168,68,46,0.16)]'
+          className='mx-auto block h-16 w-16 animate-ink-spread rounded-xl object-cover shadow-[0_6px_24px_rgba(168,68,46,0.16)]'
         />
         <h1 className='mt-4 pl-[0.35em] text-4xl font-semibold tracking-[0.35em] text-ink'>
           全部文章
@@ -145,7 +145,7 @@ export default function AllPosts({ posts }: Props) {
       </header>
 
       {/* ============ 搜索栏 ============ */}
-      <Reveal>
+      <Reveal variant='fade'>
         <div className='relative mx-auto max-w-md'>
           <span className='pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-ink-faint'>
             <svg width='15' height='15' viewBox='0 0 16 16' fill='none'>
@@ -254,7 +254,7 @@ export default function AllPosts({ posts }: Props) {
             <div className='timeline-line' style={{ left: '7px' }} />
             {groups.map(([year, yearPosts]) => (
               <section key={year} className='mb-14'>
-                <Reveal>
+                <Reveal variant='blur'>
                   <div className='relative mb-6 flex items-center gap-4'>
                     <span className='absolute -left-10 top-1/2 h-3.5 w-3.5 -translate-y-1/2 rounded-full border-2 border-cinnabar bg-paper shadow-[0_0_0_4px_rgba(168,68,46,0.1)]' />
                     <h2 className='text-2xl font-semibold tracking-wider text-ink/85 tabular-nums'>
@@ -269,12 +269,12 @@ export default function AllPosts({ posts }: Props) {
 
                 <ul className='space-y-1'>
                   {yearPosts.map((post, i) => (
-                    <Reveal key={post.id} delay={Math.min(i * 60, 300)}>
+                    <Reveal key={post.id} variant={i % 2 === 0 ? 'left' : 'right'} delay={Math.min(i * 60, 300)}>
                       <li className='group relative'>
                         <span className='timeline-dot' style={{ left: '-37px' }} />
                         <Link
                           href={`/post/${post.slug}`}
-                          className='flex items-center gap-4 rounded-lg px-4 py-4 transition-all duration-350 hover:bg-surface hover:shadow-[0_4px_16px_rgba(46,43,36,0.05)]'>
+                          className='card-lift flex items-center gap-4 rounded-lg px-4 py-4 transition-all duration-350 hover:bg-surface hover:shadow-[0_4px_16px_rgba(46,43,36,0.05)]'>
                           {/* 封面缩略图 + 角标图标 */}
                           <div className='img-skeleton relative h-14 w-20 shrink-0 overflow-hidden rounded-md'>
                             {post.pageCover && (

@@ -2,7 +2,7 @@ import { Head, Html, Main, NextScript } from 'next/document'
 
 export default function Document() {
   return (
-    <Html lang='zh-CN' style={{ backgroundColor: '#f6f2e9' }}>
+    <Html lang='zh-CN' data-scroll-behavior='smooth' style={{ backgroundColor: '#f6f2e9' }}>
       <Head>
         {/* 首帧即为宣纸底色，避免加载瞬间滚动条/右缘透出黑边 */}
         <meta name='color-scheme' content='light only' />

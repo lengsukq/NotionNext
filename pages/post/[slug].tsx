@@ -1,6 +1,7 @@
 import BLOG from '@/blog.config'
 import Footer from '@/components/Footer'
 import NotionPage from '@/components/NotionPage'
+import Reveal from '@/components/Reveal'
 import Toc from '@/components/Toc'
 import { getPosts, getPostById } from '@/lib/notion-server'
 import { notionColorClass, type Post } from '@/lib/notion'
@@ -187,8 +188,8 @@ export default function PostPage({ post, prev, next }: Props) {
       </article>
 
       {/* ============ 文末信息卡 ============ */}
-      <section className='mx-auto max-w-3xl px-5 pb-6 sm:px-6'>
-        <div className='relative overflow-hidden rounded-2xl border border-line bg-surface p-7 shadow-[0_8px_32px_rgba(46,43,36,0.06)] sm:p-9'>
+      <Reveal variant='zoom' className='mx-auto max-w-3xl px-5 pb-6 sm:px-6'>
+        <div className='card-lift relative overflow-hidden rounded-2xl border border-line bg-surface p-7 shadow-[0_8px_32px_rgba(46,43,36,0.06)] sm:p-9'>
           {/* 装饰纹理 */}
           <div className='pointer-events-none absolute -right-6 -top-6 text-[120px] leading-none text-line/30 select-none' aria-hidden='true'>
             ❧
@@ -233,13 +234,13 @@ export default function PostPage({ post, prev, next }: Props) {
             </div>
           </div>
         </div>
-      </section>
+      </Reveal>
 
       {/* ============ 上一篇 / 下一篇 · 带封面 ============ */}
-      <nav className='mx-auto max-w-3xl px-5 pb-16 sm:px-6'>
+      <Reveal variant='fade' className='mx-auto max-w-3xl px-5 pb-16 sm:px-6'>
         <div className='grid gap-5 border-t border-line/70 pt-10 sm:grid-cols-2'>
           {prev ? (
-            <Link href={`/post/${prev.slug}`} className='group'>
+            <Link href={`/post/${prev.slug}`} className='group card-lift rounded-xl'>
               <p className='text-[11px] tracking-[0.25em] text-ink-faint'>⟵ 上一篇</p>
               <div className='mt-3 flex items-center gap-3.5'>
                 {prev.pageCover && (
@@ -287,7 +288,7 @@ export default function PostPage({ post, prev, next }: Props) {
             </Link>
           )}
         </div>
-      </nav>
+      </Reveal>
 
       {/* 页脚 */}
       <Footer />

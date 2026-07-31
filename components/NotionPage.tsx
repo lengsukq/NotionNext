@@ -1,33 +1,36 @@
 import { mapImageUrl } from '@/lib/notion'
 import dynamic from 'next/dynamic'
 import { NotionRenderer } from 'react-notion-x'
+import BlockReveal from '@/components/BlockReveal'
 // Collection 必须静态导入：页面属于 collection 时服务端会渲染页面属性表，
 // 若用 dynamic 懒加载会导致客户端 hydration 不一致
 import { Collection } from 'react-notion-x/build/third-party/collection'
 
 /**
  * Notion 页面渲染器
- * 使用 react-notion-x 将 blockMap 渲染为网页
+ * 使用 react-notion-x 将 blockMap 渲染为网页，正文块随滚动逐段浮现
  */
 const NotionPage = ({ blockMap, className }: { blockMap: any; className?: string }) => {
   if (!blockMap) return null
 
   return (
     <div className={`mx-auto ${className || ''}`}>
-      <NotionRenderer
-        recordMap={blockMap}
-        mapPageUrl={mapPageUrl}
-        mapImageUrl={mapImageUrl}
-        fullPage={false}
-        previewImages={false}
-        components={{
-          Code,
-          Collection,
-          Equation,
-          Modal,
-          Pdf
-        }}
-      />
+      <BlockReveal>
+        <NotionRenderer
+          recordMap={blockMap}
+          mapPageUrl={mapPageUrl}
+          mapImageUrl={mapImageUrl}
+          fullPage={false}
+          previewImages={false}
+          components={{
+            Code,
+            Collection,
+            Equation,
+            Modal,
+            Pdf
+          }}
+        />
+      </BlockReveal>
     </div>
   )
 }

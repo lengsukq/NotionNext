@@ -6,6 +6,7 @@ import '@/styles/globals.css'
 
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import BLOG from '@/blog.config'
 import SplashScreen from '@/components/SplashScreen'
 import ScrollProgress from '@/components/ScrollProgress'
@@ -13,6 +14,8 @@ import PageTransition from '@/components/PageTransition'
 import BackToTop from '@/components/BackToTop'
 
 export default function App({ Component, pageProps }: AppProps) {
+  const router = useRouter()
+
   return (
     <>
       <Head>
@@ -27,7 +30,10 @@ export default function App({ Component, pageProps }: AppProps) {
       <ScrollProgress />
       <PageTransition />
       <BackToTop />
-      <Component {...pageProps} />
+      {/* 路由切换后新页面以淡入上移入场，与幕布揭开衔接 */}
+      <div key={router.asPath} className='animate-page-enter'>
+        <Component {...pageProps} />
+      </div>
     </>
   )
 }
